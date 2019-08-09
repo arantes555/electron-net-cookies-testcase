@@ -10,7 +10,7 @@ app.on('ready', async () => {
   const defaultSession = session.defaultSession
   defaultSession.clearStorageData({ storages: 'cookies' })
 
-  defaultSession.webRequest.onSendHeaders({}, ({ requestHeaders }) => {
+  defaultSession.webRequest.onSendHeaders({ urls: ['http://*/*'] }, ({ requestHeaders }) => {
     console.log('REQUEST-HEADERS', requestHeaders)
   })
 
