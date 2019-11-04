@@ -17,7 +17,7 @@ app.on('ready', async () => {
   const doRequest = (url) => new Promise(resolve => {
     const request = net.request({ url, session: defaultSession })
     request.on('response', (response) => {
-      console.log(`Response SET-COOKIE: ${response.headers['set-cookie'] || response.headers['Set-Cookie']}`)
+      console.log(`Response SET-COOKIE: ${response.headers['set-cookie'] || response.headers['Set-Cookie']}`) // Broken on electron7, so logs are less visible : https://github.com/electron/electron/issues/20631
       let body = ''
       response.on('data', chunk => body += chunk)
       response.on('end', () => {
@@ -27,12 +27,9 @@ app.on('ready', async () => {
     request.end()
   })
 
-  const getStoredCookies = () => new Promise((resolve, reject) =>
-    defaultSession.cookies.get(
-      {},
-      (err, res) => err ? reject(err) : resolve(JSON.stringify(res.map(({name, value, domain}) => ({name, value, domain}))))
-    )
-  )
+  const getStoredCookies = () => defaultSession.cookies.get({})
+    .then(res => JSON.stringify(res.map(({name, value, domain}) => ({name, value, domain}))))
+
 
   await local.start()
   console.log('Server started')
